@@ -63,3 +63,6 @@ Data is collected from various Apis and webpages downloaded from the internet.
 
 * `README.md`
     - Project landing page (this page)
+
+
+App is live on https://groverrohit-bs-capstone-predicting-mag7-stockprices.streamlit.app/
