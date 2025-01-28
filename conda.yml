@@ -69,7 +69,7 @@ dependencies:
   - bzip2=1.0.8=h1de35cc_0
   - c-ares=1.19.1=h6c40b1e_0
   - c-blosc2=2.12.0=hcf5af9b_0
-  - ca-certificates=2024.7.2=hecd8cb5_0
+  - ca-certificates=2024.12.31=hecd8cb5_0
   - cachetools=4.2.2=pyhd3eb1b0_0
   - cctools=949.0.1=h9abeeb2_25
   - cctools_osx-64=949.0.1=hc7db93f_25
@@ -288,7 +288,7 @@ dependencies:
   - oniguruma=6.9.7.1=h9ed2024_0
   - openjpeg=2.4.0=h66ea3da_0
   - openpyxl=3.0.10=py311h6c40b1e_0
-  - openssl=3.0.14=h46256e1_0
+  - openssl=3.0.15=h46256e1_0
   - orc=1.7.4=h995b336_1
   - overrides=7.4.0=py311hecd8cb5_0
   - packaging=23.1=py311hecd8cb5_0
@@ -432,7 +432,7 @@ dependencies:
   - sqlite=3.41.2=h6c40b1e_0
   - stack_data=0.2.0=pyhd3eb1b0_0
   - statsmodels=0.14.0=py311hb3a5e46_0
-  - streamlit=1.30.0=py311hecd8cb5_0
+  - streamlit=1.41.1=py311hecd8cb5_0
   - sympy=1.12=py311hecd8cb5_0
   - tabulate=0.9.0=py311hecd8cb5_0
   - tapi=1000.10.8=ha1b3eb9_0
@@ -519,6 +519,9 @@ dependencies:
       - optree==0.13.0
       - peewee==3.17.6
       - pip==24.2
+      - pyqt6==6.8.0
+      - pyqt6-qt6==6.8.1
+      - pyqt6-sip==13.9.1
       - scikit-learn==1.5.2
       - tensorboard==2.16.2
       - tensorboard-data-server==0.7.2

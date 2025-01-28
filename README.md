@@ -63,14 +63,3 @@ Data is collected from various Apis and webpages downloaded from the internet.
 
 * `README.md`
     - Project landing page (this page)
-
-* `LICENSE`
-    - Project license
-
-#### Dataset
-
-... Google Drive links to datasets and pickled models
-
-### Credits & References
-
-... Include any personal learning

@@ -1,0 +1,10 @@
+pandas
+streamlit
+scikit-learn
+yfinance
+datetime
+numpy
+fredapi
+matplotlib
+seaborn
+dateutil
