@@ -163,76 +163,76 @@ def preProcessing(final_df_stock_prices, macro_economic_data, df_pe, df_eps):
     final_stocks_df = economic_data_needed.copy()
     final_stocks_df = final_stocks_df.dropna()
     
-    final_df_nvidia = final_stocks_df.copy()
-    final_df_nvidia_close = final_df_nvidia.drop(['Open', 'High', 'Low'], axis=1, level=1)
+    final_df_stock = final_stocks_df.copy()
+    final_df_stock_close = final_df_stock.drop(['Open', 'High', 'Low'], axis=1, level=1)
     # Drop extra level in the columns
-    final_df_nvidia_close.columns = final_df_nvidia_close.columns.droplevel()
-    final_df_nvidia_close = final_df_nvidia_close.rename(columns={'Close': 'NVIDIA_Close'})
+    final_df_stock_close.columns = final_df_stock_close.columns.droplevel()
+    final_df_stock_close = final_df_stock_close.rename(columns={'Close': 'stock_Close'})
 
-    final_df_nvidia_close = final_df_nvidia_close.merge(df_pe, how='left', left_index = True, right_index = True)
-    final_df_nvidia_close = final_df_nvidia_close.merge(df_eps, how='left', left_index = True, right_index = True)
+    final_df_stock_close = final_df_stock_close.merge(df_pe, how='left', left_index = True, right_index = True)
+    final_df_stock_close = final_df_stock_close.merge(df_eps, how='left', left_index = True, right_index = True)
     
     if(ticker=='NVDA'):
-        final_df_nvidia_close['PE Ratio'].iloc[0] = df_pe.loc['2014-07-31']
-        final_df_nvidia_close['Quarterly EPS'].iloc[0] = df_eps.loc['2014-07-31', 'Quarterly EPS']
+        final_df_stock_close['PE Ratio'].iloc[0] = df_pe.loc['2014-07-31']
+        final_df_stock_close['Quarterly EPS'].iloc[0] = df_eps.loc['2014-07-31', 'Quarterly EPS']
     
     else:
-        final_df_nvidia_close['PE Ratio'].iloc[0] = df_pe.loc['2014-06-30']
-        final_df_nvidia_close['Quarterly EPS'].iloc[0] = df_eps.loc['2014-06-30', 'Quarterly EPS']
+        final_df_stock_close['PE Ratio'].iloc[0] = df_pe.loc['2014-06-30']
+        final_df_stock_close['Quarterly EPS'].iloc[0] = df_eps.loc['2014-06-30', 'Quarterly EPS']
         
-    final_df_nvidia_close['PE Ratio'] = final_df_nvidia_close['PE Ratio'].fillna(method="ffill")
+    final_df_stock_close['PE Ratio'] = final_df_stock_close['PE Ratio'].fillna(method="ffill")
     
     
-    final_df_nvidia_close['Quarterly EPS'] = final_df_nvidia_close['Quarterly EPS'].fillna(method="ffill")
+    final_df_stock_close['Quarterly EPS'] = final_df_stock_close['Quarterly EPS'].fillna(method="ffill")
     
-    final_df_nvidia_close['Quarterly EPS'] = final_df_nvidia_close['Quarterly EPS'].str.replace('$', '')
+    final_df_stock_close['Quarterly EPS'] = final_df_stock_close['Quarterly EPS'].str.replace('$', '')
 
-    final_df_nvidia_close['Rolling Mean'] = final_df_nvidia_close['NVIDIA_Close'].rolling(window=30).mean()
-    final_df_nvidia_close['Rolling Std'] = final_df_nvidia_close['NVIDIA_Close'].rolling(window=30).std()
+    final_df_stock_close['Rolling Mean'] = final_df_stock_close['stock_Close'].rolling(window=30).mean()
+    final_df_stock_close['Rolling Std'] = final_df_stock_close['stock_Close'].rolling(window=30).std()
     
     # Convert "NVDIA_Close" to "float" from "string" for visualizations
-    final_df_nvidia_close['NVIDIA_Close'] = final_df_nvidia_close['NVIDIA_Close'].astype(np.dtype("float32"))
+    final_df_stock_close['stock_Close'] = final_df_stock_close['stock_Close'].astype(np.dtype("float32"))
     
     
-    final_df_nvidia_close['Lagged_GDP'] = final_df_nvidia_close['GDP Growth'].shift(21)
-    final_df_nvidia_close['Lagged_Inflation'] = final_df_nvidia_close['Inflation (CPI)'].shift(21)
-    final_df_nvidia_close['Lagged_Unemp_rate'] = final_df_nvidia_close['Unemployment Rate'].shift(21)
-    final_df_nvidia_close['Lagged_Retail_Sales'] = final_df_nvidia_close['Retail Sales'].shift(21)
-    final_df_nvidia_close['Lagged_Industrial_prod'] = final_df_nvidia_close['Industrial Production'].shift(21)
-    final_df_nvidia_close['Lagged_PE'] = final_df_nvidia_close['PE Ratio'].shift(21)
-    final_df_nvidia_close['Lagged_EPS'] = final_df_nvidia_close['Quarterly EPS'].shift(21)
+    final_df_stock_close['Lagged_GDP'] = final_df_stock_close['GDP Growth'].shift(21)
+    final_df_stock_close['Lagged_Inflation'] = final_df_stock_close['Inflation (CPI)'].shift(21)
+    final_df_stock_close['Lagged_Unemp_rate'] = final_df_stock_close['Unemployment Rate'].shift(21)
+    final_df_stock_close['Lagged_Retail_Sales'] = final_df_stock_close['Retail Sales'].shift(21)
+    final_df_stock_close['Lagged_Industrial_prod'] = final_df_stock_close['Industrial Production'].shift(21)
+    final_df_stock_close['Lagged_PE'] = final_df_stock_close['PE Ratio'].shift(21)
+    final_df_stock_close['Lagged_EPS'] = final_df_stock_close['Quarterly EPS'].shift(21)
     
-    final_df_nvidia_close['Lagged_Rolling_Mean'] = final_df_nvidia_close['Rolling Mean'].shift(21)
-    final_df_nvidia_close['Lagged_Rolling_Std'] = final_df_nvidia_close['Rolling Std'].shift(21)
+    final_df_stock_close['Lagged_Rolling_Mean'] = final_df_stock_close['Rolling Mean'].shift(21)
+    final_df_stock_close['Lagged_Rolling_Std'] = final_df_stock_close['Rolling Std'].shift(21)
     
-    final_df_nvidia_close = final_df_nvidia_close.dropna()
-    return final_df_nvidia_close
+    final_df_stock_close = final_df_stock_close.dropna()
+    return final_df_stock_close
 
 
 
 
-def drawVisualizations(final_df_nvidia_close):
+def drawVisualizations(final_df_stock_close):
 
     def plot_reg(col):
-        sns.lmplot(x=col, y='NVIDIA_Close', data=final_df_nvidia_close)
+        sns.lmplot(x=col, y='stock_Close', data=final_df_stock_close)
         plt.xticks(rotation=90)
         st.pyplot(plt)
         # plt.savefig(f'pairs{col}.png', bbox_inches='tight')
     
-    cols = [i for i in final_df_nvidia_close.columns.values.tolist() if i not in ["NVIDIA_Close", "Quarterly EPS", "Lagged_EPS"]]
+    cols = [i for i in final_df_stock_close.columns.values.tolist() if i not in ["stock_Close", "Quarterly EPS", "Lagged_EPS"]]
     for col in cols:
         plot_reg(col)
 
     # Plot heatmap
     plt.figure(figsize=(20,20))
-    sns.heatmap(final_df_nvidia_close.corr(), annot=True, cmap='coolwarm')
+    sns.heatmap(final_df_stock_close.corr(), annot=True, cmap='coolwarm')
     st.pyplot(plt)
 
-    # Plot NVIDIA Closing Price with Rolling Mean and Rolling Std Dev.
+    # Plot stock Closing Price with Rolling Mean and Rolling Std Dev.
 
-    final_df_nvidia_close['Rolling Mean'] = final_df_nvidia_close['NVIDIA_Close'].rolling(window=30).mean()
-    final_df_nvidia_close['Rolling Std'] = final_df_nvidia_close['NVIDIA_Close'].rolling(window=30).std()
-    final_df_nvidia_close[['NVIDIA_Close', 'Rolling Mean', 'Rolling Std']].plot()
+    final_df_stock_close['Rolling Mean'] = final_df_stock_close['stock_Close'].rolling(window=30).mean()
+    final_df_stock_close['Rolling Std'] = final_df_stock_close['stock_Close'].rolling(window=30).std()
+    final_df_stock_close[['stock_Close', 'Rolling Mean', 'Rolling Std']].plot()
     plt.xticks(rotation=90)
     #plt.savefig('ma.png', bbox_inches='tight') 
     # plt.show()
@@ -240,17 +240,17 @@ def drawVisualizations(final_df_nvidia_close):
 
 
 
-def trainAndTestLinearReg(final_df_nvidia_close):
+def trainAndTestLinearReg(final_df_stock_close):
 
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_GDP', 'Lagged_Inflation', 'Lagged_Industrial_prod', 'Lagged_Retail_Sales', 'Lagged_PE', 'Lagged_EPS']
     
     
-    train_size = int(len(final_df_nvidia_close) * 0.8)  # 80% for training
-    X_train = final_df_nvidia_close[:train_size][cols]
-    y_train = final_df_nvidia_close[:train_size]['NVIDIA_Close']
+    train_size = int(len(final_df_stock_close) * 0.8)  # 80% for training
+    X_train = final_df_stock_close[:train_size][cols]
+    y_train = final_df_stock_close[:train_size]['stock_Close']
     
-    X_test = final_df_nvidia_close[train_size:][cols]
-    y_test = final_df_nvidia_close[train_size:]['NVIDIA_Close']
+    X_test = final_df_stock_close[train_size:][cols]
+    y_test = final_df_stock_close[train_size:]['stock_Close']
     
     
     model = LinearRegression()
@@ -259,18 +259,18 @@ def trainAndTestLinearReg(final_df_nvidia_close):
 
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_Inflation', 'Lagged_PE', 'Lagged_EPS']
     
-    X = final_df_nvidia_close[cols]
-    y = final_df_nvidia_close['NVIDIA_Close']
+    X = final_df_stock_close[cols]
+    y = final_df_stock_close['stock_Close']
     
     
-    train_size = int(len(final_df_nvidia_close) * 0.8)  # 80% for training
-    X_train = final_df_nvidia_close[:train_size][cols]
-    y_train = final_df_nvidia_close[:train_size]['NVIDIA_Close']
+    train_size = int(len(final_df_stock_close) * 0.8)  # 80% for training
+    X_train = final_df_stock_close[:train_size][cols]
+    y_train = final_df_stock_close[:train_size]['stock_Close']
     
-    X_test = final_df_nvidia_close[train_size:][cols]
-    y_test = final_df_nvidia_close[train_size:]['NVIDIA_Close']
+    X_test = final_df_stock_close[train_size:][cols]
+    y_test = final_df_stock_close[train_size:]['stock_Close']
     
-    # test = final_df_nvidia_close[train_size:]
+    # test = final_df_stock_close[train_size:]
     
     linreg = LinearRegression().fit(X_train, y_train)
 
@@ -316,29 +316,29 @@ def trainAndTestLinearReg(final_df_nvidia_close):
 
     return linreg
 
-def scaleData(final_df_nvidia_close):
+def scaleData(final_df_stock_close):
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_GDP', 'Lagged_Inflation', 'Lagged_Industrial_prod', 'Lagged_Retail_Sales', 'Lagged_PE', 'Lagged_EPS']
-    train_size = int(len(final_df_nvidia_close) * 0.8)  # 80% for training
-    X_train = final_df_nvidia_close[:train_size][cols]
+    train_size = int(len(final_df_stock_close) * 0.8)  # 80% for training
+    X_train = final_df_stock_close[:train_size][cols]
     scaler = MinMaxScaler()
     X_train_scaled = scaler.fit_transform(X_train)
     return scaler
 
-def trainAndTestNeuralNetwork(final_df_nvidia_close):
+def trainAndTestNeuralNetwork(final_df_stock_close):
 
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_GDP', 'Lagged_Inflation', 'Lagged_Industrial_prod', 'Lagged_Retail_Sales', 'Lagged_PE', 'Lagged_EPS']
     
     
-    train_size = int(len(final_df_nvidia_close) * 0.8)  # 80% for training
-    X_train = final_df_nvidia_close[:train_size][cols]
-    y_train = final_df_nvidia_close[:train_size]['NVIDIA_Close']
+    train_size = int(len(final_df_stock_close) * 0.8)  # 80% for training
+    X_train = final_df_stock_close[:train_size][cols]
+    y_train = final_df_stock_close[:train_size]['stock_Close']
     
-    X_test = final_df_nvidia_close[train_size:][cols]
-    y_test = final_df_nvidia_close[train_size:]['NVIDIA_Close']
+    X_test = final_df_stock_close[train_size:][cols]
+    y_test = final_df_stock_close[train_size:]['stock_Close']
 
     # Step 2: Scale the data
-    X_train_scaled = scaleData(final_df_nvidia_close).transform(X_train)
-    X_test_scaled = scaleData(final_df_nvidia_close).transform(X_test)
+    X_train_scaled = scaleData(final_df_stock_close).transform(X_train)
+    X_test_scaled = scaleData(final_df_stock_close).transform(X_test)
     
     # Define the Neural Network Regressor with L2 regularization (alpha parameter)
     mlp_regressor = MLPRegressor(max_iter=2000, learning_rate_init = 0.01, random_state=42)
