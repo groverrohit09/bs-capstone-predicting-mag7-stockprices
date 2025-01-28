@@ -431,7 +431,7 @@ def getPredictorFeatureVariablesAndRunModel(ticker, date_to_predict, df_eps, df_
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_Inflation', 'Lagged_PE', 'Lagged_EPS']
     df_final = pd.DataFrame([[rolling_mean, unemployment_lagged, inflation_lagged, pe_lagged, eps_lagged]], columns=cols)
 
-    X_pred = df_final[cols][:]
+    X_pred = df_final[cols][:].to_numpy()
     
 
     y_pred_baseline = linreg.predict(X_pred)
