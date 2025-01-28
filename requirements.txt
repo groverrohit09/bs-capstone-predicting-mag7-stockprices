@@ -7,4 +7,3 @@ numpy
 fredapi
 matplotlib
 seaborn
-dateutil
