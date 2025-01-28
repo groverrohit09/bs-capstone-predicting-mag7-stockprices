@@ -540,7 +540,7 @@ def create_pipeline_advanced(ticker, dateToPredict):
 
 
 # App title
-st.title("ML App: Predict Outcomes")
+st.title("ML App: Predict Stock Prices of Mag-7 Stocks")
 
 # User input
 st.write("Provide input features:")
