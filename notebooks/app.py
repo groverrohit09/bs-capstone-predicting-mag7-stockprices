@@ -100,7 +100,8 @@ def getMacroData():
 def getEPS(ticker):
     
 
-    url_eps = '../data/' + ticker + '_EPS.html'
+    #url_eps = '../data/' + ticker + '_EPS.html'
+    url_eps = 'https://raw.githubusercontent.com/groverrohit09/bs-capstone-predicting-mag7-stockprices/refs/heads/main/data/'+ ticker + '_EPS.html'
     
     # Use pandas to read tables on the webpages
     tables_eps = pd.read_html(url_eps)
@@ -117,7 +118,8 @@ def getEPS(ticker):
 
 def getPE(ticker):
 
-    url_pe = '../data/' + ticker + '_PE_Ratio.html'
+    #url_pe = '../data/' + ticker + '_PE_Ratio.html'
+    url_pe = 'https://raw.githubusercontent.com/groverrohit09/bs-capstone-predicting-mag7-stockprices/refs/heads/main/data/' + ticker + '_PE_Ratio.html'
     
     # Use pandas to read tables on the webpages
     table_pe = pd.read_html(url_pe)
