@@ -8,10 +8,7 @@ Prediction of Stock Prices of Mag 7 stocks through Data Science
 
 ### Executive Summary
 
-Predict the long-term performance of any large-cap stock over an year based on –
-Fundamental Factors – EPS and P/E Ratio
-Technical Factors – GDP Growth, Inflation, Unemployment Rate, Retail Sales and Industrial Production
-News and Market Sentiment
+Predict the long-term performance of any large-cap stock over an year based on Fundamental and Technical Factors
 
 ##### US Stocks and the Mag-7 - 
 A combined market capitalization of about $14 trillion
