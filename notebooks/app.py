@@ -413,10 +413,10 @@ def getPredictorFeatureVariablesAndRunModel(ticker, date_to_predict, df_eps, df_
     gdp_lagged = fred.get_series('GDP', observation_start=variables_date, observation_end=variables_date)
     
     # Get historical inflation data (CPI - Consumer Price Index)
-    inflation_lagged = fred.get_series('CPIAUCSL', observation_start=variables_date, observation_end=variables_date)
+    inflation_lagged = fred.get_series('CPIAUCSL', limit=1, sort_order='desc')
     
     # Get historical unemployment rate data
-    unemployment_lagged = fred.get_series('UNRATE', observation_start=variables_date, observation_end=variables_date)
+    unemployment_lagged = fred.get_series('UNRATE', limit=1, sort_order='desc')
     
     # Get historical data for Retail Sales
     retail_sales_lagged = fred.get_series('RSAFSNA', observation_start=variables_date, observation_end=variables_date)
@@ -431,8 +431,7 @@ def getPredictorFeatureVariablesAndRunModel(ticker, date_to_predict, df_eps, df_
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_Inflation', 'Lagged_PE', 'Lagged_EPS']
     df_final = pd.DataFrame([[rolling_mean, unemployment_lagged, inflation_lagged, pe_lagged, eps_lagged]], columns=cols)
 
-    X_pred = df_final[cols][:].to_numpy()
-    
+    X_pred = df_final[cols][:].to_numpy()    
 
     y_pred_baseline = linreg.predict(X_pred)
 
@@ -498,7 +497,6 @@ def getPredictorFeatureVariablesAndRunNeuralNetworkModel(ticker, date_to_predict
     
     cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_GDP', 'Lagged_Inflation', 'Lagged_Industrial_prod', 'Lagged_Retail_Sales', 'Lagged_PE', 'Lagged_EPS']
 
-    #cols = ['Lagged_Rolling_Mean', 'Lagged_Unemp_rate', 'Lagged_Inflation', 'Lagged_PE', 'Lagged_EPS']
     df_final = pd.DataFrame([[rolling_mean, unemployment_lagged, gdp_lagged, inflation_lagged, industrial_production_lagged, retail_sales_lagged, pe_lagged, eps_lagged]], columns=cols)
 
     X_pred = df_final[cols][:]
@@ -510,35 +508,6 @@ def getPredictorFeatureVariablesAndRunNeuralNetworkModel(ticker, date_to_predict
     st.write(f"The prediction is " + str(y_pred_date_req[0]))
 
 
-
-def create_pipeline(ticker, dateToPredict):
-    return make_pipeline(
-        stockDataFetcher(ticker),
-        getMacroData(),
-        getEPS(ticker),
-        getPE(ticker),
-        preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker)),
-        drawVisualizations(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        trainAndTestLinearReg(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        #trainAndTestNeuralNetwork(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        getPredictorFeatureVariablesAndRunModel(ticker, dateToPredict, getEPS(ticker), getPE(ticker),trainAndTestLinearReg(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))))
-        )
-
-def create_pipeline_advanced(ticker, dateToPredict):
-    return make_pipeline(
-        stockDataFetcher(ticker),
-        getMacroData(),
-        getEPS(ticker),
-        getPE(ticker),
-        scaleData(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker)),
-        drawVisualizations(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        #trainAndTestLinearReg(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        trainAndTestNeuralNetwork(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))),
-        getPredictorFeatureVariablesAndRunNeuralNetworkModel(ticker, dateToPredict, getEPS(ticker), getPE(ticker),trainAndTestNeuralNetwork(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))), scaleData(preProcessing(stockDataFetcher(ticker), getMacroData(), getPE(ticker), getEPS(ticker))))
-        )
-
-
 # App title
 st.title("ML App: Predict Stock Prices of Mag-7 Stocks")
 
@@ -548,21 +517,14 @@ tickers = ['MSFT', 'AAPL', 'GOOGL', 'META', 'AMZN', 'NVDA', 'TSLA']
 ticker = st.selectbox("Select a ticker:", tickers)
 dateToPredict = st.date_input("Date (Please enter a date within one month from now.)")
 
-# # Replace or add a dynamic step using FunctionTransformer
-# dynamic_transformer = ('dynamic_transformer', FunctionTransformer(create_pipeline, kw_args={'ticker': ticker, 'dateToPredict': date}))
-# pipeline.steps.insert(0, dynamic_transformer)  # Insert after the scaler
-
 
 # Prediction
-if st.button("Predict Using Liner Regression (Baseline Model)"):
-    # prediction = pipeline.named_steps['create_pipeline'].ticker = ticker
-    # prediction = pipeline.named_steps['create_pipeline'].date = date
-    create_pipeline(ticker=ticker, dateToPredict=dateToPredict)
-    #pipeline.cp()
-
-
-if st.button("Predict Using Neural Network (Advanced ML Model)"):
-    # prediction = pipeline.named_steps['create_pipeline'].ticker = ticker
-    # prediction = pipeline.named_steps['create_pipeline'].date = date
-    create_pipeline_advanced(ticker=ticker, dateToPredict=dateToPredict)
-    #pipeline.cp()
+if st.button("Predict"):
+    df_stock_prices = stockDataFetcher(ticker)
+    df_macro_data = getMacroData()
+    df_eps = getEPS(ticker)
+    df_pe = getPE(ticker)
+    df_preProcessed = preProcessing(df_stock_prices, df_macro_data, df_pe, df_eps)
+    drawVisualizations(df_preProcessed)
+    linreg = trainAndTestLinearReg(df_preProcessed)
+    getPredictorFeatureVariablesAndRunModel(ticker, dateToPredict, df_eps, df_pe,linreg)
