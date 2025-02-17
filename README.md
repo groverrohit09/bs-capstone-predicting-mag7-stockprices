@@ -56,9 +56,9 @@ Prediction: Forecasting stock prices for the upcoming year.<br><br>
 <br><br><br>
 
 
-**ML Models Userd**<br><br>
+**ML Models**<br><br>
 Baseline Model - Linear Regression with features used determined by Recursive Feature Elimination (RFE).<br>
-Advanced Model - Neural Network with L2 Regularization and Grid Search CV for hyperparameter tuning.<br><br><br>
+Advanced Model - Neural Network with feature scaling and Grid Search CV for hyperparameter tuning.<br><br><br>
 
 
 **📈 Results**<br>
